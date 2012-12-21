@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-03 22:00+0800\n"
+"POT-Creation-Date: 2012-12-21 23:43+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: admin.py:13 models.py:48 models.py:194
+#: admin.py:13 models.py:48 models.py:198
 msgid "agenda"
 msgstr "会议安排"
 
@@ -62,31 +62,31 @@ msgstr "3小时"
 msgid "user"
 msgstr "用户"
 
-#: models.py:40 models.py:185
+#: models.py:40 models.py:189
 msgid "meeting name"
 msgstr "会议名称"
 
-#: models.py:41 models.py:186
+#: models.py:41 models.py:190
 msgid "attendee password"
 msgstr "会议密码"
 
-#: models.py:42 models.py:188
+#: models.py:42 models.py:192
 msgid "moderator password"
 msgstr "管理员密码"
 
-#: models.py:43 models.py:190
+#: models.py:43 models.py:194
 msgid "welcome message"
 msgstr "欢迎信息"
 
-#: models.py:44 models.py:191
+#: models.py:44 models.py:195
 msgid "record"
 msgstr "录制"
 
-#: models.py:45 models.py:192
+#: models.py:45 models.py:196
 msgid "duration"
 msgstr "时长"
 
-#: models.py:46 models.py:193
+#: models.py:46 models.py:197
 msgid "start time"
 msgstr "开始时间"
 
@@ -102,19 +102,20 @@ msgstr "会议"
 msgid "meetings"
 msgstr "会议列表"
 
-#: models.py:190
+#: models.py:194
 msgid "Welcome!"
 msgstr "欢迎！"
 
-#: models.py:207
+#: models.py:211
 msgid "Your name"
 msgstr "姓名"
 
-#: models.py:208
+#: models.py:212
 msgid "password"
 msgstr "密码"
 
 #: templates/base.html:230 templates/home.html:4
+#: templates/admin/app_index.html:8 templates/admin/change_list.html:42
 msgid "Home"
 msgstr "主页"
 
@@ -215,26 +216,88 @@ msgstr "开启会议"
 msgid "There are no meetings at the moment."
 msgstr "当前没有会议"
 
+#: templates/admin/base_site.html:4
+msgid "Django bbb site admin"
+msgstr "会议管理站点"
+
+#: templates/admin/base_site.html:7
+msgid "Django bbb administration"
+msgstr "会议管理"
+
+#: templates/admin/change_list.html:64
+#, python-format
+msgid "Add %(name)s"
+msgstr ""
+
+#: templates/admin/change_list.html:73
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/admin/change_list.html:84
+msgid "Filter"
+msgstr ""
+
+#: templates/admin/index.html:18
+#, python-format
+msgid "Models available in the %(name)s application."
+msgstr ""
+
+#: templates/admin/index.html:29
+msgid "Add"
+msgstr ""
+
+#: templates/admin/index.html:35
+msgid "Change"
+msgstr ""
+
+#: templates/admin/index.html:45
+msgid "You don't have permission to edit anything."
+msgstr ""
+
+#: templates/admin/index.html:53
+msgid "Recent Actions"
+msgstr ""
+
+#: templates/admin/index.html:54
+msgid "My Actions"
+msgstr ""
+
+#: templates/admin/index.html:58
+msgid "None available"
+msgstr ""
+
+#: templates/admin/index.html:72
+msgid "Unknown content"
+msgstr ""
+
 #: views/core.py:41
 #, python-format
 msgid ""
 "please join the meeting via %(url)s, the attendee password is \"%(pwd)s\""
 msgstr "请通过下面的url加入会议:%(url)s, 会议密码为:\"%(pwd)s\""
 
-#: views/core.py:184
+#: views/core.py:186
 #, python-format
 msgid "Successfully ended meeting %s"
 msgstr "成功结束会议%s"
 
-#: views/core.py:188
+#: views/core.py:190
 #, python-format
 msgid "Unable to end meeting %s"
 msgstr "未能结束会议%s"
 
-#: views/core.py:216
+#: views/core.py:219
 #, python-format
 msgid "Successfully schdulered meeting %s"
 msgstr "成功预定会议%s"
+
+#~ msgid "Bbb"
+#~ msgstr "会议管理"
+
+#~ msgid "bbb"
+#~ msgstr "会议管理"
 
 #~ msgid "Not running"
 #~ msgstr "未开始"
