@@ -17,6 +17,9 @@
 		    <form method="GET" action="{% url join meeting.meeting_id%}"><input type="submit" value="{% trans "Join" %}"/></form> <form method="POST" action="{% url delete meeting.meeting_id meeting.moderator_pw %}">{% csrf_token %}<input type="submit" value="{% trans "End" %}"/></form>
 		{% else %}
 		    <span class="status notrunning">{% trans "Ended" %}</span>
+                    {% if meeting.playback_url %}
+                    <input type="submit" value="{% trans "Playback" %}" onclick="javascritp:window.open('{{ meeting.playback_url }}')"/>
+                    {% endif %}
 		{% endif %}
 	    {% else %}
 	       <span class="status notrunning">{% trans "Not started" %}</span>

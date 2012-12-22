@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-21 23:43+0800\n"
+"POT-Creation-Date: 2012-12-22 18:28+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: admin.py:13 models.py:48 models.py:198
+#: admin.py:13 models.py:48 models.py:241
 msgid "agenda"
 msgstr "会议安排"
 
@@ -62,31 +62,31 @@ msgstr "3小时"
 msgid "user"
 msgstr "用户"
 
-#: models.py:40 models.py:189
+#: models.py:40 models.py:232
 msgid "meeting name"
 msgstr "会议名称"
 
-#: models.py:41 models.py:190
+#: models.py:41 models.py:233
 msgid "attendee password"
 msgstr "会议密码"
 
-#: models.py:42 models.py:192
+#: models.py:42 models.py:235
 msgid "moderator password"
 msgstr "管理员密码"
 
-#: models.py:43 models.py:194
+#: models.py:43 models.py:237
 msgid "welcome message"
 msgstr "欢迎信息"
 
-#: models.py:44 models.py:195
+#: models.py:44 models.py:238
 msgid "record"
 msgstr "录制"
 
-#: models.py:45 models.py:196
+#: models.py:45 models.py:239
 msgid "duration"
 msgstr "时长"
 
-#: models.py:46 models.py:197
+#: models.py:46 models.py:240
 msgid "start time"
 msgstr "开始时间"
 
@@ -102,15 +102,15 @@ msgstr "会议"
 msgid "meetings"
 msgstr "会议列表"
 
-#: models.py:194
+#: models.py:237
 msgid "Welcome!"
 msgstr "欢迎！"
 
-#: models.py:211
+#: models.py:254
 msgid "Your name"
 msgstr "姓名"
 
-#: models.py:212
+#: models.py:255
 msgid "password"
 msgstr "密码"
 
@@ -196,23 +196,27 @@ msgstr "运行中"
 msgid "End"
 msgstr "结束会议"
 
-#: templates/meetings.html:19
+#: templates/meetings.html:20
+msgid "Playback"
+msgstr "会议录制"
+
+#: templates/meetings.html:22
 msgid "Ended"
 msgstr "已结束"
 
-#: templates/meetings.html:22
+#: templates/meetings.html:25
 msgid "Not started"
 msgstr "未开始"
 
-#: templates/meetings.html:23
+#: templates/meetings.html:26
 msgid "Calendar export"
 msgstr "日程导出"
 
-#: templates/meetings.html:24
+#: templates/meetings.html:27
 msgid "Start"
 msgstr "开启会议"
 
-#: templates/meetings.html:39
+#: templates/meetings.html:42
 msgid "There are no meetings at the moment."
 msgstr "当前没有会议"
 
@@ -278,17 +282,17 @@ msgid ""
 "please join the meeting via %(url)s, the attendee password is \"%(pwd)s\""
 msgstr "请通过下面的url加入会议:%(url)s, 会议密码为:\"%(pwd)s\""
 
-#: views/core.py:186
+#: views/core.py:190
 #, python-format
 msgid "Successfully ended meeting %s"
 msgstr "成功结束会议%s"
 
-#: views/core.py:190
+#: views/core.py:194
 #, python-format
 msgid "Unable to end meeting %s"
 msgstr "未能结束会议%s"
 
-#: views/core.py:219
+#: views/core.py:223
 #, python-format
 msgid "Successfully schdulered meeting %s"
 msgstr "成功预定会议%s"

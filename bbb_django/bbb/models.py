@@ -150,6 +150,49 @@ class Meeting(models.Model):
         else:
             return 'error'
 
+    @classmethod
+    def get_recordings(self, meeting_id=None):
+        """
+        Retrieves the recordings that are available for playback for a given meetingID (or set of meeting IDs).
+        
+        :param meetingID: The meeting ID that identifies the meeting 
+        """
+        call = 'getRecordings'
+        if meeting_id:
+            query = urlencode((
+                           ('meetingID', meeting_id),
+                           ))
+        else:
+            query = ''
+        hashed = self.api_call(query, call)
+        url = settings.BBB_API_URL + call + '?' + hashed
+        print 'recording url:%s'%url
+        r = parse(urlopen(url).read())
+        # ToDO implement more keys
+        if r:
+            recordings = r.find('recordings')
+            if recordings is None:
+                return None
+            records = []
+            for session in recordings.findall('recording'):
+	        record = {}
+                record['record_id'] = session.find('recordID').text
+                record['meeting_id'] = session.find('meetingID').text
+                record['meeting_name'] = session.find('name').text
+                record['published'] = session.find('published').text == "true"
+                record['start_time'] = session.find('startTime').text
+                record['end_time'] = session.find('endTime').text
+                playbacks = session.find('playback')
+                for f in playbacks.findall('format'):
+                    if f.find('type').text == 'slides':
+                        record['playback_url'] = f.find('url').text
+                        record['length'] = f.find('length').text
+                records.append(record)
+            #print records
+            return records
+        else:
+            return None
+
     def start(self):
         call = 'create' 
         voicebridge = 70000 + random.randint(0,9999)

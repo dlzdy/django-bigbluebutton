@@ -129,8 +129,12 @@ def meetings(request):
             },
         }
 
+        record_info = Meeting.get_recordings(meeting.id)
+        if record_info:
+            d['playback_url'] = record_info[0]['playback_url']
+        #print 'record info: %s'% Meeting.get_recordings(meeting.id)
 	detail = started.get('%d'%meeting.id)
-        print meeting.id, detail
+        #print meeting.id, detail
 	if detail is not None:
             d['running'] = detail['running']
 	    d['info'].update(detail['info'])
