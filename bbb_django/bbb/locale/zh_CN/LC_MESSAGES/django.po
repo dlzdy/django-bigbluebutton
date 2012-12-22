@@ -293,11 +293,11 @@ msgstr "未能结束会议%s"
 msgid "Successfully schdulered meeting %s"
 msgstr "成功预定会议%s"
 
-#~ msgid "Bbb"
-#~ msgstr "会议管理"
+msgid "Bbb"
+msgstr "会议管理"
 
-#~ msgid "bbb"
-#~ msgstr "会议管理"
+msgid "bbb"
+msgstr "会议管理"
 
 #~ msgid "Not running"
 #~ msgstr "未开始"
