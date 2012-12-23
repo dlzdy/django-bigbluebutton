@@ -14,7 +14,9 @@
             {% if meeting.info.started %}
                 {% if meeting.running == 'true' %}
                     <span class="status running">{% trans "Running" %}</span>
-		    <form method="GET" action="{% url join meeting.meeting_id%}"><input type="submit" value="{% trans "Join" %}"/></form> <form method="POST" action="{% url delete meeting.meeting_id meeting.moderator_pw %}">{% csrf_token %}<input type="submit" value="{% trans "End" %}"/></form>
+                    {% if perms.bbb.end_meeting %}
+		    <form method="GET" action="{% url join meeting.meeting_id%}"><input type="submit" value="{% trans "Join" %}"/></form> <form method="POST" action="{% url delete meeting.meeting_id meeting.info.moderator_pw %}">{% csrf_token %}<input type="submit" value="{% trans "End" %}"/></form>
+                    {% endif %}
 		{% else %}
 		    <span class="status notrunning">{% trans "Ended" %}</span>
                     {% if meeting.playback_url %}
