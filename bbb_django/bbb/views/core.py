@@ -178,7 +178,10 @@ def join_meeting(request, meeting_id):
                 err_msg = ErrorList([_("Wrong password")])
 
 
-    form = form_class()
+    if request.user:
+        form = form_class(initial={'name': request.user})
+    else:
+        form = form_class()
     if err_msg != '':
         form.errors['password'] = err_msg
         #errors = form.errors.setdefault("password", ErrorList())
