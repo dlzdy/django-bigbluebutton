@@ -165,10 +165,24 @@ def join_meeting(request, meeting_id):
                 meeting.started = True
                 meeting.save()
                 url = meeting.start()
+                return HttpResponseRedirect(Meeting.join_url(meeting_id, name, password))
+            elif password == meeting.attendee_password:
+                if  meeting.started:
+                    return HttpResponseRedirect(Meeting.join_url(meeting_id, name, password))
 
-            return HttpResponseRedirect(Meeting.join_url(meeting_id, name, password))
-    else:
-        form = form_class()
+                else:
+                    #Should start the meeting by moderator first
+                    err_msg = ErrorList([_("Should start the meeting by moderator first")])
+            else:
+                #wrong password
+                err_msg = ErrorList([_("Wrong password")])
+
+
+    form = form_class()
+    if err_msg != '':
+        form.errors['password'] = err_msg
+        #errors = form.errors.setdefault("password", ErrorList())
+        #errors.append(err_msg)    
 
     meeting = Meeting.objects.get(id=meeting_id)
     context = RequestContext(request, {

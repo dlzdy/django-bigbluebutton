@@ -9,7 +9,7 @@
 {% if meetings %}
     <ul class="large">
     {% for meeting in meetings %}
-        <li>{{ meeting.name }} <a class="more-info">{% trans "view details" %}</a>
+        <li>
             <span class="right">
             {% if meeting.info.started %}
                 {% if meeting.running == 'true' %}
@@ -29,6 +29,7 @@
 	       <form method="GET" action="{% url join meeting.meeting_id%}"><input type="submit" value="{% trans "Start" %}"/></form>
 	    {% endif %}
             </span>
+            {{ meeting.name }} <a class="more-info">{% trans "view details" %}</a>
             <table>
                 {% for item in meeting.info.items %}
                 <tr>
