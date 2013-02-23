@@ -10,3 +10,4 @@ flup
 South
 pytz
 icalendar
+django-pagination
