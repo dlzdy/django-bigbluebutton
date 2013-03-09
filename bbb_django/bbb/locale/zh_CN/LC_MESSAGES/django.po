@@ -228,6 +228,9 @@ msgstr "会议管理站点"
 msgid "Django bbb administration"
 msgstr "会议管理"
 
+msgid "Administration"
+msgstr "后台管理"
+
 #: templates/admin/change_list.html:64
 #, python-format
 msgid "Add %(name)s"

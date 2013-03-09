@@ -41,7 +41,7 @@ class Meeting(models.Model):
     name = models.CharField(max_length=100, verbose_name=_('meeting name'))
     attendee_password = models.CharField(max_length=50, verbose_name=_('attendee password'))
     moderator_password = models.CharField(max_length=50, verbose_name=_('moderator password'))
-    welcome = models.CharField(max_length=100, blank=True, verbose_name=_('welcome message'))
+    #welcome = models.CharField(max_length=100, blank=True, verbose_name=_('welcome message'))
     record = models.BooleanField(default=False, verbose_name=_('record'))
     duration = models.IntegerField(default=0, choices=MEETING_DURATION, verbose_name=_('duration'))
     start_time = models.DateTimeField(verbose_name=_('start time'))
@@ -231,8 +231,8 @@ class Meeting(models.Model):
             ('attendeePW', self.attendee_password),
             ('moderatorPW', self.moderator_password),
             ('voiceBridge', voicebridge),
-            #('welcome', _("Welcome!").encode('utf8')),
-            ('welcome', self.welcome.encode('utf8')),
+            #('welcome', self.welcome.encode('utf8')),
+            ('welcome', self.agenda.encode('utf8')),
             ('record', self.record),
             #('duration', self.duration),
         ))
@@ -263,7 +263,7 @@ class Meeting(models.Model):
             widget=forms.PasswordInput(render_value=False))
         moderator_password = forms.CharField(label=_('moderator password'),
             widget=forms.PasswordInput(render_value=False))
-        welcome = forms.CharField(label=_('welcome message'), initial=_('Welcome!'))
+        #welcome = forms.CharField(label=_('welcome message'), initial=_('Welcome!'))
         record = forms.BooleanField(label=_('record'), initial=False, required=False)
         duration = forms.ChoiceField(label=_('duration'), choices=MEETING_DURATION)
         start_time = forms.DateTimeField(label=_('start time'), widget=widgets.AdminSplitDateTime())

@@ -83,8 +83,8 @@ h1 {
     text-indent: -9999px;
     display: block;
     background: url(/static/img/logo.png) no-repeat top left;
-    height: 48px;
-    width: 194px;
+    height: 50px;
+    width: 340px;
     margin: 0 auto;
     margin-bottom: 10px;
 }
@@ -233,6 +233,9 @@ th {
             <li><a href="{% url calendar_today %}">{% trans "Calendar" %}</a></li>
         {% else %}
             <li><a href="{% url login %}">{% trans "Log in" %}</a></li>
+        {% endif %}
+        {% if user.is_superuser %}                   
+            <li><a href="{% url admin:index %}">{% trans "Administration" %}</a></li>
         {% endif %}
         </ul>
         </nav>

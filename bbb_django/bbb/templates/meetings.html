@@ -10,7 +10,7 @@
 <h2>{% trans "Meetings" %}</h2>
 {% if meetings %}
     <ul class="large">
-    {% autopaginate meetings 2 %}
+    {% autopaginate meetings 10 %}
     {% for meeting in meetings %}
         <li>
             <span class="right">

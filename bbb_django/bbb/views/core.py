@@ -59,8 +59,10 @@ def calendar(request, year, month):
     m = int(month)
     from_date = date(y, m, 1)
     to_date = date(y, m, monthrange(y,m)[1])
-    meetings = Meeting.objects.filter(user=request.user).filter(start_time__gte=from_date, start_time__lte=to_date)
-    #meetings = Meeting.objects.filter(start_time__gte=from_date, start_time__lte=to_date)
+    if settings.ISOLATION_MODE:
+        meetings = Meeting.objects.filter(user=request.user).filter(start_time__gte=from_date, start_time__lte=to_date).order_by('start_time')
+    else:    
+        meetings = Meeting.objects.filter(start_time__gte=from_date, start_time__lte=to_date)
     prev_year = y
     prev_month = m - 1 
     if prev_month == 0:
@@ -71,15 +73,15 @@ def calendar(request, year, month):
     if next_month == 13:
         next_month = 1
 	next_year += 1
-    year_after = y + 1
-    year_before = y - 1
+    #year_after = y + 1
+    #year_before = y - 1
 
     items = request.LANGUAGE_CODE.split('-')
     locale_name = 'en_US.UTF-8'
     if len(items) == 2:
         locale_name = items[0] + '_' + items[1].upper() + '.UTF-8'
 
-    print m,y,prev_month,prev_year,next_month,next_year,year_before,year_after 
+    #print m,y,prev_month,prev_year,next_month,next_year,year_before,year_after 
     html_calendar = MeetingCalendar(meetings, locale=locale_name).formatmonth(y, m)
     context = RequestContext(request, {
         'Calendar': mark_safe(html_calendar),
@@ -89,8 +91,8 @@ def calendar(request, year, month):
         'PreviousYear': prev_year,
         'NextMonth': next_month,
         'NextYear': next_year,
-        'YearBeforeThis': year_before,
-        'YearAfterThis': year_after,    
+        #'YearBeforeThis': year_before,
+        #'YearAfterThis': year_after,    
     })
     
     return render_to_response('calendar.html', context)
@@ -110,8 +112,10 @@ def begin_meeting(request):
 @login_required
 def meetings(request):
 
-    #existing = Meeting.objects.all()
-    existing = Meeting.objects.filter(user=request.user)
+    if settings.ISOLATION_MODE:
+        existing = Meeting.objects.filter(user=request.user)
+    else:
+        existing = Meeting.objects.all()
     #meetings = Meeting.get_meetings()
     started = Meeting.get_meetings()
 
