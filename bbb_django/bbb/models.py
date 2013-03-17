@@ -17,6 +17,7 @@ import datetime
 import pytz
 
 def parse(response):
+    settings.LOGGER.debug(response)
     try:
         xml = ET.XML(response)
         code = xml.find('returncode').text

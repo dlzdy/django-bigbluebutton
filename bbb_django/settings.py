@@ -137,6 +137,30 @@ ISOLATION_MODE = True
 
 AUTH_PROFILE_MODULE = 'bbb.UserProfile'
 
+import logging
+import logging.handlers
+import os.path
+here = lambda x: os.path.join(os.path.abspath(os.path.dirname(__file__)), x)
+
+LOG_DIR = here('log')
+LOG_FILE_SIZE = 50*1024*1024
+LOG_BAKUP_CNT = 10
+
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+LOG_FILENAME = LOG_DIR + os.sep +'bbb_django.log'
+LOGGER = logging.getLogger('bbb_django')
+if DEBUG:
+    LOGGER.setLevel(logging.DEBUG)
+else:
+    LOGGER.setLevel(logging.INFO)
+handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=LOG_FILE_SIZE, backupCount=LOG_BAKUP_CNT)
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')#("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+handler.setFormatter(formatter)
+LOGGER.addHandler(handler)
+
+LOGGER.debug("log init ok: %s"%LOG_DIR)
+
 ## Load our local_settings
 try:
   from bbb.local_settings import *
