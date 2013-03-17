@@ -306,35 +306,23 @@ msgstr "会议管理"
 msgid "bbb"
 msgstr "会议管理"
 
-#~ msgid "Not running"
-#~ msgstr "未开始"
-
-#~ msgid "invite_url"
-#~ msgstr "邀请链接"
-
-#~ msgid "end_time"
-#~ msgstr "结束时间"
-
-#~ msgid "participant_count"
-#~ msgstr "参会人数"
-
-#~ msgid "moderator_count"
-#~ msgstr "管理员人数"
-
-#~ msgid "moderator_pw"
-#~ msgstr "管理员密码"
-
-#~ msgid "attendee_pw"
-#~ msgstr "会议密码"
-
-#~ msgid "running"
-#~ msgstr "运行中"
-
-#~ msgid "info"
-#~ msgstr "其他信息"
-
 msgid "previous"
 msgstr "上页"
 
 msgid "next"
 msgstr "下页"
+
+msgid "attendee_pw"
+msgstr "会议密码"
+
+msgid "moderator_pw"
+msgstr "管理员密码"
+
+msgid "start_time"
+msgstr "开始时间"
+
+msgid "yes"
+msgstr "是"
+
+msgid "no"
+msgstr "否"

@@ -135,6 +135,8 @@ LOCALE_PATHS = os.path.join(PROJECT_ROOT, 'bbb', 'locale')
 
 ISOLATION_MODE = True 
 
+AUTH_PROFILE_MODULE = 'bbb.UserProfile'
+
 ## Load our local_settings
 try:
   from bbb.local_settings import *

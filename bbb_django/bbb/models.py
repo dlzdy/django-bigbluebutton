@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin import widgets
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete,post_save
 
 from urllib2 import urlopen
 from urllib import urlencode
@@ -14,6 +14,7 @@ from hashlib import sha1
 import xml.etree.ElementTree as ET
 import random
 import datetime
+import pytz
 
 def parse(response):
     try:
@@ -34,6 +35,30 @@ MEETING_DURATION = (
     (120, _('2 hour')),
     (180, _('3 hour')),
 )
+
+def tz_convert(dt, from_tz, to_tz):
+    src_tz = pytz.timezone(from_tz)
+    dst_tz = pytz.timezone(to_tz)
+    if src_tz is not None:
+        dt = src_tz.localize(dt)
+    if dst_tz is not None:
+        dt = dt.astimezone(dst_tz)
+    return dt
+
+TIME_ZONES = (
+    (tz, tz) for tz in pytz.common_timezones
+)
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User)
+    tz = models.CharField(max_length=100, default='Asia/Shanghai', choices=TIME_ZONES, verbose_name=_('timezone'))
+
+def create_user_profile(sender, instance, created, **kwargs):  
+    if created:  
+       profile, created = UserProfile.objects.get_or_create(user=instance)  
+
+post_save.connect(create_user_profile, sender=User) 
+
 
 class Meeting(models.Model):
 

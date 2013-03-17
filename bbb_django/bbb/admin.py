@@ -7,7 +7,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.utils.translation import ugettext_lazy as _
 from django import forms
 
-from bbb.models import Meeting
+from bbb.models import Meeting,UserProfile
 
 class MeetingForm(forms.ModelForm):
     agenda = forms.CharField(label=_('agenda'), widget=forms.Textarea)
@@ -64,11 +64,14 @@ class UserChangeForm(UserChangeForm):
     username = UnicodeRegexField(label=_("Username"), max_length=30,
         regex=u'^\w+$', help_text=help_text, error_message=error_message)
 
+class ProfileInline(admin.StackedInline):
+    model = UserProfile
+    can_delete = False
 
 class UserProfileAdmin(UserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
-
+    inlines = (ProfileInline,)
 
 admin.site.unregister(User)
 admin.site.register(User, UserProfileAdmin) 

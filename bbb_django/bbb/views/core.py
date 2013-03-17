@@ -13,7 +13,7 @@ from django.forms.util import ErrorList
 
 from icalendar import Calendar, Event
 from calendar import monthrange
-from datetime import timedelta
+from datetime import timedelta,datetime
 import hashlib
 
 from bbb.models import *
@@ -32,7 +32,8 @@ def export_meeting(request, meeting_id):
     cal.add('version', '2.0')
     event = Event()
     event.add('summary', meeting.name)
-    event.add('dtstart', meeting.start_time)
+    #event.add('dtstart', meeting.start_time)
+    event.add('dtstart', tz_convert(meeting.start_time, 'UTC', request.user.get_profile().tz))
     if meeting.duration == 0:
         event.add('duration', timedelta(days=1))#unlimit is 1 day by default
     else:
@@ -57,12 +58,20 @@ def calendar_today(request):
 def calendar(request, year, month):
     y = int(year)
     m = int(month)
-    from_date = date(y, m, 1)
-    to_date = date(y, m, monthrange(y,m)[1])
+    #from_date = date(y, m, 1)
+    #to_date = date(y, m, monthrange(y,m)[1])
+    start_dt = datetime(y,m,1,0,0,0)
+    end_dt = datetime(y,m+1,1,0,0,0)
     if settings.ISOLATION_MODE:
-        meetings = Meeting.objects.filter(user=request.user).filter(start_time__gte=from_date, start_time__lte=to_date).order_by('start_time')
+        #meetings = Meeting.objects.filter(user=request.user).filter(start_time__gte=from_date, start_time__lte=to_date).order_by('start_time')
+        meetings = Meeting.objects.filter(user=request.user).filter(start_time__gte=tz_convert(start_dt, 'UTC', request.user.get_profile().tz), start_time__lt=tz_convert(end_dt, 'UTC', request.user.get_profile().tz)).order_by('start_time')
     else:    
-        meetings = Meeting.objects.filter(start_time__gte=from_date, start_time__lte=to_date)
+        #meetings = Meeting.objects.filter(start_time__gte=from_date, start_time__lte=to_date)
+        meetings = Meeting.objects.filter(start_time__gte=tz_convert(start_dt, 'UTC', request.user.get_profile().tz), start_time__lt=tz_convert(end_dt, 'UTC', request.user.get_profile().tz)).order_by('start_time')
+
+    for item in meetings:
+        item.start_time = tz_convert(item.start_time, 'UTC', request.user.get_profile().tz)
+
     prev_year = y
     prev_month = m - 1 
     if prev_month == 0:
@@ -127,10 +136,11 @@ def meetings(request):
 	    'info': {
                 'moderator_pw': meeting.moderator_password,
 	        'attendee_pw': meeting.attendee_password,
-                'record': meeting.record,
+                'record': _('yes') if meeting.record else _('no'),
                 'duration': meeting.get_duration_display(),
-                'start_time': meeting.start_time,
-                'started': meeting.started,
+                #'start_time': meeting.start_time,
+                'start_time': tz_convert(meeting.start_time, 'UTC', request.user.get_profile().tz),
+                'started': _('yes') if meeting.started else _('no'),
             },
         }
 
@@ -237,7 +247,8 @@ def create_meeting(request):
             meeting.welcome = data.get('welcome')
             meeting.record = data.get('record')
             meeting.duration = data.get('duration')
-            meeting.start_time = data.get('start_time')
+            #meeting.start_time = data.get('start_time')
+            meeting.start_time = tz_convert(data.get('start_time'), request.user.get_profile().tz, 'UTC')
             meeting.agenda = data.get('agenda')
             meeting.user = request.user
             meeting.save()
