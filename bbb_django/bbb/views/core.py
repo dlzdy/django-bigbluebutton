@@ -133,6 +133,7 @@ def meetings(request):
         d = {
 	    'name': meeting.name,
 	    'meeting_id': meeting.id,
+            'started': meeting.started,
 	    'info': {
                 'moderator_pw': meeting.moderator_password,
 	        'attendee_pw': meeting.attendee_password,

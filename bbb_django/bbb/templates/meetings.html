@@ -14,7 +14,7 @@
     {% for meeting in meetings %}
         <li>
             <span class="right">
-            {% if meeting.info.started %}
+            {% if meeting.started %}
                 {% if meeting.running == 'true' %}
                     <span class="status running">{% trans "Running" %}</span>
                     {% if perms.bbb.end_meeting %}
