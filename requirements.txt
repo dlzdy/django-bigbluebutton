@@ -9,5 +9,6 @@ Django==1.3
 flup
 South
 pytz
+python-dateutil
 icalendar
 django-pagination
