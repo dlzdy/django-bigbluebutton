@@ -10,11 +10,13 @@ from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.forms.util import ErrorList
+from django.core.mail import send_mail
 
 from icalendar import Calendar, Event
 from calendar import monthrange
 from datetime import timedelta,datetime
 import hashlib
+import pytz
 
 from bbb.models import *
 from bbb.webcalendar import *
@@ -229,6 +231,37 @@ def delete_meeting(request, meeting_id, password):
         messages.error(request, msg)
         return HttpResponseRedirect(reverse('meetings'))
 
+def send_invitation(user, recipients, meeting, join_url):
+    subject = _('Invitation to online meeting: %s')%meeting.name
+    message_attendees = _('''
+Dear all,
+
+    Please attend the meeting scheduled by %s.
+
+    The meeting will be start at %s, and you can join the meeting via %s with password: "%s"
+
+
+Focus on open source collaboration solution
+Commuxi Team Regards!
+    ''')%(user.username, meeting.start_time.astimezone(pytz.timezone(user.get_profile().tz)),
+    join_url, meeting.attendee_password)
+    
+    send_mail(subject, message_attendees, 'noreply@commuxi.com', recipients, fail_silently=False)
+
+    message_moderator = _('''
+Dear %s,
+
+    Please remember the online meeting which is scheduled to start at %s, via %s with password: "%s"
+
+
+Focus on open source collaboration solution
+Commuxi Team Regards!
+    ''')%(user.username, meeting.start_time.astimezone(pytz.timezone(user.get_profile().tz)),
+    join_url, meeting.moderator_password)
+
+    if user.email:
+        send_mail(subject, message_moderator, 'noreply@commuxi.com', [user.email], fail_silently=False)
+
 @login_required
 @permission_required('bbb.create_meeting')
 def create_meeting(request):
@@ -257,6 +290,8 @@ def create_meeting(request):
             #msg = _('Successfully created meeting %s') % meeting.name
             msg = _('Successfully schdulered meeting %s') % meeting.name
             messages.success(request, msg)
+	    join_url = request.build_absolute_uri(reverse('join',args=[meeting.id]))
+	    send_invitation(meeting.user, data.get('recipients'), meeting, join_url)
             return HttpResponseRedirect(reverse('meetings'))
             '''
             try:

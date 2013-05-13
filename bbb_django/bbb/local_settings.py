@@ -1,5 +1,11 @@
 # local_settings.py
 # Edit this file to customize the private settings
 
-SALT = "c55f0eb8f0d36fa81e4aa86a69d692f1"
-BBB_API_URL = "http://yourhostname/bigbluebutton/api/"
+SALT = ""
+BBB_API_URL = "http://yourhost/bigbluebutton/api/"
+
+EMAIL_HOST = "smtp.youhost.com"
+EMAIL_PORT = 25
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+EMAIL_USE_TLS = False

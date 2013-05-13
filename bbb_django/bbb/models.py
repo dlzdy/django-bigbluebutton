@@ -16,6 +16,26 @@ import random
 import datetime
 import pytz
 
+from django.core.validators import validate_email
+
+class MultiEmailField(forms.Field):
+    def to_python(self, value):
+        "Normalize data to a list of strings."
+
+        # Return an empty list if no input was given.
+        if not value:
+            return []
+        return value.split(',')
+
+    def validate(self, value):
+        "Check if value consists only of valid emails."
+
+        # Use the parent's handling of required fields, etc.
+        super(MultiEmailField, self).validate(value)
+
+        for email in value:
+            validate_email(email)
+
 def parse(response):
     settings.LOGGER.debug(response)
     try:
@@ -294,6 +314,7 @@ class Meeting(models.Model):
         duration = forms.ChoiceField(label=_('duration'), choices=MEETING_DURATION)
         start_time = forms.DateTimeField(label=_('start time'), widget=widgets.AdminSplitDateTime())
         agenda = forms.CharField(label=_('agenda'), required=False, widget=forms.Textarea)
+        recipients = MultiEmailField(label=_('email recipients'), required=False)
        
         def clean(self):
             data = self.cleaned_data
