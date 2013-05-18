@@ -11,6 +11,7 @@ from bbb.models import Meeting,UserProfile
 
 class MeetingForm(forms.ModelForm):
     agenda = forms.CharField(label=_('agenda'), widget=forms.Textarea)
+    recipients = forms.CharField(label=_('recipients'), widget=forms.Textarea)
     class Meta:
         model = Meeting
 

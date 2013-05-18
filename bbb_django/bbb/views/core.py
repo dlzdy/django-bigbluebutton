@@ -10,7 +10,7 @@ from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.forms.util import ErrorList
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 
 from icalendar import Calendar, Event
 from calendar import monthrange
@@ -29,6 +29,13 @@ def home_page(request):
 @login_required
 def export_meeting(request, meeting_id):
     meeting = Meeting.objects.get(id=meeting_id)
+    desc = _('please join the meeting via %(url)s, the attendee password is "%(pwd)s"')%\
+      ({'url':request.build_absolute_uri(reverse('join',args=[meeting_id])), 'pwd': meeting.attendee_password})
+    response = HttpResponse(get_meeting_ical(request,meeting,desc), mimetype='text/calendar')
+    response['Content-Disposition'] = 'attachment; filename=%s.ics'%meeting.name.encode('utf8')
+    return response
+
+def get_meeting_ical(request, meeting, desc):
     cal = Calendar()
     cal.add('prodid', '-//commuxi Corporation//bbbforum release//')
     cal.add('version', '2.0')
@@ -39,17 +46,14 @@ def export_meeting(request, meeting_id):
     if meeting.duration == 0:
         event.add('duration', timedelta(days=1))#unlimit is 1 day by default
     else:
-        event.add('duration', timedelta(minutes=meeting.duration))
+        event.add('duration', timedelta(minutes=int(meeting.duration)))
     #event.add('dtend', '')
     event.add('location', 'http://www.commux.com')
-    event.add('description', _('please join the meeting via %(url)s, the attendee password is "%(pwd)s"')%\
-      ({'url':request.build_absolute_uri(reverse('join',args=[meeting_id])), 'pwd': meeting.attendee_password}))
+    event.add('description', desc)
     event['uid'] = "%s@%s"%(meeting.id,request.META['HTTP_HOST']) 
     cal.add_component(event)
     #print cal.to_ical()
-    response = HttpResponse(cal.to_ical(), mimetype='text/calendar')
-    response['Content-Disposition'] = 'attachment; filename=%s.ics'%meeting.name.encode('utf8')
-    return response
+    return cal.to_ical()
 
 @login_required
 def calendar_today(request):
@@ -231,36 +235,46 @@ def delete_meeting(request, meeting_id, password):
         messages.error(request, msg)
         return HttpResponseRedirect(reverse('meetings'))
 
-def send_invitation(user, recipients, meeting, join_url):
+def send_invitation(request, recipients, meeting, join_url):
+    user = request.user
     subject = _('Invitation to online meeting: %s')%meeting.name
     message_attendees = _('''
 Dear all,
 
-    Please attend the meeting scheduled by %s.
+    Please attend the meeting scheduled by %(username)s.
 
-    The meeting will be start at %s, and you can join the meeting via %s with password: "%s"
+    The meeting will be start at %(start_ts)s, and you can join the meeting via %(link)s with password: "%(pwd)s"
 
+    Agenda:
+
+    %(agenda)s
 
 Focus on open source collaboration solution
 Commuxi Team Regards!
-    ''')%(user.username, meeting.start_time.astimezone(pytz.timezone(user.get_profile().tz)),
-    join_url, meeting.attendee_password)
+    ''')%{'username':user.username, 'start_ts':meeting.start_time.astimezone(pytz.timezone(user.get_profile().tz)),
+    'link':join_url, 'pwd':meeting.attendee_password, 'agenda':meeting.agenda}
     
-    send_mail(subject, message_attendees, 'noreply@commuxi.com', recipients, fail_silently=False)
+    #send_mail(subject, message_attendees, 'noreply@commuxi.com', recipients, fail_silently=False)
+    msg = EmailMessage(subject, message_attendees, 'noreply@commuxi.com', recipients)
+    msg.attach('%s.ics'%meeting.name.encode('utf8'), get_meeting_ical(request,meeting,message_attendees), 'text/calendar')
+    msg.send(fail_silently=False)
 
     message_moderator = _('''
-Dear %s,
+Dear %(username)s,
 
-    Please remember the online meeting which is scheduled to start at %s, via %s with password: "%s"
+    Please remember the online meeting which is scheduled to start at %(start_ts)s, via %(link)s with password: "%(pwd)s"
 
 
 Focus on open source collaboration solution
 Commuxi Team Regards!
-    ''')%(user.username, meeting.start_time.astimezone(pytz.timezone(user.get_profile().tz)),
-    join_url, meeting.moderator_password)
+    ''')%{'username':user.username, 'start_ts':meeting.start_time.astimezone(pytz.timezone(user.get_profile().tz)),
+    'link':join_url, 'pwd':meeting.moderator_password}
 
     if user.email:
-        send_mail(subject, message_moderator, 'noreply@commuxi.com', [user.email], fail_silently=False)
+        #send_mail(subject, message_moderator, 'noreply@commuxi.com', [user.email], fail_silently=False)
+        msg = EmailMessage(subject, message_moderator, 'noreply@commuxi.com', [user.email])
+        msg.attach('%s.ics'%meeting.name.encode('utf8'), get_meeting_ical(request,meeting,message_moderator), 'text/calendar')
+        msg.send(fail_silently=False)
 
 @login_required
 @permission_required('bbb.create_meeting')
@@ -281,7 +295,7 @@ def create_meeting(request):
             meeting.welcome = data.get('welcome')
             meeting.record = data.get('record')
             meeting.duration = data.get('duration')
-            #meeting.start_time = data.get('start_time')
+            meeting.recipients= data.get('recipients')
             meeting.start_time = tz_convert(data.get('start_time'), request.user.get_profile().tz, 'UTC')
             meeting.agenda = data.get('agenda')
             meeting.user = request.user
@@ -291,7 +305,7 @@ def create_meeting(request):
             msg = _('Successfully schdulered meeting %s') % meeting.name
             messages.success(request, msg)
 	    join_url = request.build_absolute_uri(reverse('join',args=[meeting.id]))
-	    send_invitation(meeting.user, data.get('recipients'), meeting, join_url)
+	    send_invitation(request, data.get('recipients'), meeting, join_url)
             return HttpResponseRedirect(reverse('meetings'))
             '''
             try:

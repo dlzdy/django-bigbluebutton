@@ -17,6 +17,7 @@ import datetime
 import pytz
 
 from django.core.validators import validate_email
+import re
 
 class MultiEmailField(forms.Field):
     def to_python(self, value):
@@ -25,7 +26,7 @@ class MultiEmailField(forms.Field):
         # Return an empty list if no input was given.
         if not value:
             return []
-        return value.split(',')
+        return [e.strip() for e in re.split('[,\n ]', value) if e.strip()]
 
     def validate(self, value):
         "Check if value consists only of valid emails."
@@ -60,7 +61,7 @@ MEETING_DURATION = (
 def tz_convert(dt, from_tz, to_tz):
     src_tz = pytz.timezone(from_tz)
     dst_tz = pytz.timezone(to_tz)
-    if src_tz is not None:
+    if src_tz is not None and dt.tzinfo is None:
         dt = src_tz.localize(dt)
     if dst_tz is not None:
         dt = dt.astimezone(dst_tz)
@@ -87,12 +88,12 @@ class Meeting(models.Model):
     name = models.CharField(max_length=100, verbose_name=_('meeting name'))
     attendee_password = models.CharField(max_length=50, verbose_name=_('attendee password'))
     moderator_password = models.CharField(max_length=50, verbose_name=_('moderator password'))
-    #welcome = models.CharField(max_length=100, blank=True, verbose_name=_('welcome message'))
     record = models.BooleanField(default=False, verbose_name=_('record'))
     duration = models.IntegerField(default=0, choices=MEETING_DURATION, verbose_name=_('duration'))
     start_time = models.DateTimeField(verbose_name=_('start time'))
     started = models.BooleanField(default=False, verbose_name=_('started'))
     agenda = models.CharField(max_length=1000, blank=True, verbose_name=_('agenda'))
+    recipients = models.CharField(max_length=1000, blank=True, verbose_name=_('recipients'))
 
     #def __unicode__(self):
     #    return self.name
@@ -309,12 +310,11 @@ class Meeting(models.Model):
             widget=forms.PasswordInput(render_value=False))
         moderator_password = forms.CharField(label=_('moderator password'),
             widget=forms.PasswordInput(render_value=False))
-        #welcome = forms.CharField(label=_('welcome message'), initial=_('Welcome!'))
         record = forms.BooleanField(label=_('record'), initial=False, required=False)
         duration = forms.ChoiceField(label=_('duration'), choices=MEETING_DURATION)
-        start_time = forms.DateTimeField(label=_('start time'), widget=widgets.AdminSplitDateTime())
+        start_time = forms.DateTimeField(label=_('start time'), widget=widgets.AdminSplitDateTime)
         agenda = forms.CharField(label=_('agenda'), required=False, widget=forms.Textarea)
-        recipients = MultiEmailField(label=_('email recipients'), required=False)
+        recipients = MultiEmailField(label=_('email recipients'), required=False,widget=forms.Textarea)
        
         def clean(self):
             data = self.cleaned_data
