@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin import widgets
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.db.models.signals import pre_delete
 
 from urllib2 import urlopen
 from urllib import urlencode
@@ -151,6 +152,34 @@ class Meeting(models.Model):
             return 'error'
 
     @classmethod
+    def delete_recordings(self, meeting_id=None):
+        """
+        Delete one or more recordings for a given recordID (or set of record IDs).
+        
+        :param record_id: A record ID for specify the recordings to delete. It can be a set of meetingIDs separate by commas. 
+        """
+        record_info = Meeting.get_recordings(meeting_id)
+        record_id_list = []
+        for item in record_info:
+            record_id_list.append(item['record_id'])
+
+        call = 'deleteRecordings'
+        if record_id_list:
+            query = urlencode((
+                            ('recordID', ','.join(record_id_list)),
+                             ))
+        else:
+            query = ''
+        hashed = self.api_call(query, call)
+        url = settings.BBB_API_URL + call + '?' + hashed
+        print 'delete recording url:%s'%url
+        r = parse(urlopen(url).read())
+        # ToDO implement more keys
+        if r:
+            return r.find('deleted').text == 'true'
+        return False
+
+    @classmethod
     def get_recordings(self, meeting_id=None):
         """
         Retrieves the recordings that are available for playback for a given meetingID (or set of meeting IDs).
@@ -254,3 +283,11 @@ class Meeting(models.Model):
         name = forms.CharField(label=_("Your name"))
         password = forms.CharField(label=_('password'),
             widget=forms.PasswordInput(render_value=False))
+
+
+def delete_record_cb(sender, **kwargs):
+    meeting = kwargs['instance']
+    if meeting.record:
+        Meeting.delete_recordings(meeting.id)
+
+pre_delete.connect(delete_record_cb, sender=Meeting)
