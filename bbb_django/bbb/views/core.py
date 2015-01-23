@@ -58,8 +58,8 @@ def calendar(request, year, month):
     m = int(month)
     from_date = date(y, m, 1)
     to_date = date(y, m, monthrange(y,m)[1])
-    #meetings = Meeting.objects.filter(user=request.user).filter(start_time__gte=from_date, start_time__lte=to_date)
-    meetings = Meeting.objects.filter(start_time__gte=from_date, start_time__lte=to_date)
+    meetings = Meeting.objects.filter(user=request.user).filter(start_time__gte=from_date, start_time__lte=to_date)
+    #meetings = Meeting.objects.filter(start_time__gte=from_date, start_time__lte=to_date)
     prev_year = y
     prev_month = m - 1 
     if prev_month == 0:
@@ -109,8 +109,8 @@ def begin_meeting(request):
 @login_required
 def meetings(request):
 
-    existing = Meeting.objects.all()
-    #existing = Meeting.objects.filter(user=request.user)
+    #existing = Meeting.objects.all()
+    existing = Meeting.objects.filter(user=request.user)
     #meetings = Meeting.get_meetings()
     started = Meeting.get_meetings()
 
@@ -149,6 +149,7 @@ def meetings(request):
 
 def join_meeting(request, meeting_id):
     form_class = Meeting.JoinForm
+    err_msg = ''
 
     if request.method == "POST":
         # Get post data from form
@@ -200,8 +201,8 @@ def join_meeting(request, meeting_id):
 @permission_required('bbb.end_meeting')
 def delete_meeting(request, meeting_id, password):
     if request.method == "POST":
-        meeting = Meeting.objects.filter(id=meeting_id)
-        meeting.delete()
+        #meeting = Meeting.objects.filter(id=meeting_id)
+        #meeting.delete()
         Meeting.end_meeting(meeting_id, password)
 
         msg = _('Successfully ended meeting %s') % meeting_id
