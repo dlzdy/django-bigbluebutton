@@ -9,6 +9,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
+from django.forms.util import ErrorList
 
 from icalendar import Calendar, Event
 from calendar import monthrange
