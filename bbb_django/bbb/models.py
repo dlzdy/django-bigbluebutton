@@ -260,7 +260,7 @@ class Meeting(models.Model):
                 record['end_time'] = session.find('endTime').text
                 playbacks = session.find('playback')
                 for f in playbacks.findall('format'):
-                    if f.find('type').text == 'slides':
+                    if f.find('type').text == 'presentation':
                         record['playback_url'] = f.find('url').text
                         record['length'] = f.find('length').text
                 records.append(record)

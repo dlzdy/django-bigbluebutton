@@ -305,7 +305,8 @@ def create_meeting(request):
             msg = _('Successfully schdulered meeting %s') % meeting.name
             messages.success(request, msg)
 	    join_url = request.build_absolute_uri(reverse('join',args=[meeting.id]))
-	    send_invitation(request, data.get('recipients'), meeting, join_url)
+            if settings.ENABLE_EMAIL_NOTIFICATION:
+	        send_invitation(request, data.get('recipients'), meeting, join_url)
             return HttpResponseRedirect(reverse('meetings'))
             '''
             try:
