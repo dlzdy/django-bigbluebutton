@@ -4,9 +4,9 @@
 echo 'update "SALT" and "BBB_API_URL" in "bbb/local_settings.py"'
 
 OUTPUT=(`bbb-conf --salt`)
-BBB_API_URL=${OUTPUT[1]}
+BBB_API_URL=${OUTPUT[1]}api/
 SALT=${OUTPUT[3]}
-sed -i "s|SALT = \"\"|SALT=\"${SALT}\"|g" bbb/local_settings.py
+sed -i "s|SALT = \"\"|SALT = \"${SALT}\"|g" bbb/local_settings.py
 sed -i "s|BBB_API_URL = \"\"|BBB_API_URL = \"${BBB_API_URL}\"|g" bbb/local_settings.py
 
 echo 'update nginx conf file'
